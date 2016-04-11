@@ -21,8 +21,8 @@ monodomain_xml_file = ParamList.xml
     normalDiffusion = 3 #0.176 #3.0
     
     [../time_discretization]
-    endtime         = 100000
-    timestep        = 0.05
+    endtime         = 400 
+    timestep        = 0.050
     
     [../discretization]
     LumpedMass = false // use when too coarse mesh
@@ -56,7 +56,7 @@ monodomain_xml_file = ParamList.xml
     CalciumIndex = 0 # potential for activstress, 2 from minimal for active strain.
     ActiveForceCoefficient = -4.0
     Tmax = 50 #1 #5 #0.05 #1 #0.1 #2 # Default: 50
-    ActiveStress_Beta = 2.279 #45.6 #2.279 #45.6 #2.279
+    ActiveStress_Beta =  2.279 #45.6 #2.279 #45.6 #2.279
     EMActiveStrainOrthotropicParameter = -666.0 # -666.0 for deactivated
         #Active Strain types Available
         # Anisotropic
@@ -64,8 +64,33 @@ monodomain_xml_file = ParamList.xml
         # TransverselyIsotropic
     EMActiveStrainType = TransverselyIsotropic
 
+    [../cardiopathy]
+	#A cardiopathy is implementet in ActiveStressRossi14.cpp
+	#the activation Parameter which is calculated there can be alleviated in certain regions on the left ventricular wall 
+	#choose case_area = 1 if you want to alleviate a cubic region
+	#choose case_area = 2 if you want to alleviate a ellipical region
+	#choose case_area = 0 if you do not want to implement a cardiopathy
+     case_area = 2
+	#cubic Region: 
+     x_max = 1.04
+     x_min = -1.04
+     y_max = 4.411
+     y_min = 2.113
+     z_max = 0.0
+     z_min = -4.0
+         
+        #choose a location of the ellipse with x_mid and y_mid and choose a and b 
+        #z component is the same as in the cubic region
+     a_major = 1.2
+     b_minor = 1.9
+     x_midpoint = -0.7
+     y_midpoint = 3.0
+
+	# choose the amount you want to alleviate the activation
+     weakness_factor=0.01
+
     [../time_discretization]
-    endtime         = 100000
+    endtime         = 400
     timestep        = 0.05
 
     [../]
@@ -133,7 +158,7 @@ monodomain_xml_file = ParamList.xml
     [../boundary_conditions]
     list = 'SupportNormal SupportRobin BaseNormal BaseRobin'
     listVariableBC = 'LVEndo RVEndo RVSeptum RVRadii'
-    numPreloadSteps  = 10
+    numPreloadSteps  = 0 # No initial deformation takes place
 
         [./SupportNormal]
         type       = Essential
@@ -209,7 +234,7 @@ monodomain_xml_file = ParamList.xml
     [../time_discretization]
     initialtime 	= 0.
     endtime         = 100000.
-    timestep        = 0.2
+    timestep        = 1000 # We set a very high timestep to ignore the mechanical solution->faster calulation.
     theta       	= 0.35
     zeta        	= 0.75
     BDF_order   	= 2

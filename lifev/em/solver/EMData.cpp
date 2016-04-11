@@ -100,7 +100,44 @@ EMData::setupActivationParameters(GetPot& dataFile, const std::string& section)
 
     double  ActiveStressBeta = dataFile ( ( section + "/physics/ActiveStress_Beta" ).data(), 2.279 );
     M_activationParametersList.set ("ActiveStress_Beta", ActiveStressBeta );
-    
+   
+    //cardiopathy
+    int caseArea = dataFile(( section + "/cardiopathy/case_area" ).data(), 2 );
+    M_activationParametersList.set("case_area",caseArea);
+
+    double weaknessFactor = dataFile(( section + "/cardiopathy/weakness_factor").data(), 0.01);
+    M_activationParametersList.set("weakness_factor",weaknessFactor);
+
+    double xMax = dataFile(( section + "/cardiopathy/x_max").data(), 1 );
+    M_activationParametersList.set("x_max",xMax);
+
+    double yMax = dataFile(( section + "/cardiopathy/y_max").data(), 1);
+    M_activationParametersList.set("y_max",yMax);
+
+    double zMax = dataFile(( section + "/cardiopathy/z_max").data(), 0);
+    M_activationParametersList.set("z_max",zMax);
+
+    double xMin = dataFile(( section + "/cardiopathy/x_min").data(), 1);
+    M_activationParametersList.set("x_min",xMin);
+
+    double yMin = dataFile(( section + "/cardiopathy/y_min").data(), 1);
+    M_activationParametersList.set("y_min",yMin);
+
+    double zMin = dataFile(( section + "/cardiopathy/z_min").data(), -4);
+    M_activationParametersList.set("z_min",zMin);
+
+    double aMajor = dataFile(( section + "/cardiopathy/a_major").data(), 1);
+    M_activationParametersList.set("a_major",aMajor);
+  
+    double bMinor = dataFile(( section + "/cardiopathy/b_minor").data(), 1.7);
+    M_activationParametersList.set("b_minor",bMinor);
+
+    double xMid = dataFile(( section + "/cardiopathy/x_midpoint").data(), 0);
+    M_activationParametersList.set("x_midpoint",xMid);
+
+    double yMid = dataFile(( section + "/cardiopathy/y_midpoint").data(), 3.44514);
+    M_activationParametersList.set("y_midpoint",yMid);
+ 
     double ActiveStressMu = dataFile ( ( section + "/physics/ActiveStressMu" ).data(), 1000.0 );
     M_activationParametersList.set ("ActiveStress_Mu", ActiveStressMu);
 

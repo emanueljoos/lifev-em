@@ -9,6 +9,7 @@
 #define ACTIVESTRESSROSSIMODEL14_HPP_
 
 #include <lifev/em/solver/activation/activeStressModels/ActiveStressActivation.hpp>
+#include <lifev/core/mesh/RegionMesh.hpp>
 
 namespace LifeV
 {
@@ -24,26 +25,32 @@ public:
 
     typedef ActiveStressActivation                                      super;
 
+    
+
     ActiveStressRossiModel14 (Real beta = 2.279, Real mu = 1000., Real Tmax = 50.);
 //    ActiveStressRossiModel14 (MapEpetra& map, Real beta = 2.279, Real mu = 1000., Real Tmax = 50.);
 //    ActiveStressRossiModel14 (const MapEpetra& map, Real beta = 2.279, Real mu = 1000., Real Tmax = 50.);
 
     virtual ~ActiveStressRossiModel14() {}
 
-    void solveModel (Real& timeStep);
+    void solveModel (Real& timeStep );
+    void solveModel2 (Real& timeStep ,boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr);
+
+
 
 
     inline Real coefficientBeta()
     {
         return M_coefficientBeta;
     }
+
     inline void setCoefficientBeta (Real beta)
     {
         M_coefficientBeta = beta;
     }
 
     inline Real coefficientMu()
-    {
+   {
         return M_coefficientMu;
     }
     inline void setCoefficientMu (Real mu)
@@ -60,6 +67,7 @@ public:
         M_maximumActiveTenstion = Tmax;
     }
 
+
     void setupActivationPtrs(	vectorPtr_Type& fiberActivationPtr,
 								vectorPtr_Type& sheetActivationPtr,
 								vectorPtr_Type& normalActivationPtr );
@@ -75,7 +83,18 @@ private:
     Real M_coefficientBeta;
     Real M_coefficientMu;
     Real M_maximumActiveTenstion;
-
+	int M_caseArea;
+	double M_weakessFactor;
+	double M_xMax;
+	double M_xMin;
+	double M_yMax;
+	double M_yMin;
+	double M_zMax;
+	double M_zMin;
+	double M_aMajor;
+	double M_bMinor;
+	double M_xMid;
+	double M_yMid;
 };
 
 

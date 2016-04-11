@@ -16,6 +16,7 @@
 
 #include <lifev/em/solver/EMData.hpp>
 
+#include <lifev/core/mesh/RegionMesh.hpp>
 
 
 namespace LifeV
@@ -45,9 +46,12 @@ public:
     								vectorPtr_Type& sheetActivationPtr,
     								vectorPtr_Type& normalActivationPtr ) = 0;
 
-    virtual void solveModel(Real& timeStep) = 0;
 
 
+    virtual void solveModel(Real& timeStep )=0;
+
+    virtual void solveModel2(Real& timeStep,boost::shared_ptr<RegionMesh<LinearTetra> > localMeshPtr )
+{}
 
     VectorEpetra& fiberActivation()
     {
