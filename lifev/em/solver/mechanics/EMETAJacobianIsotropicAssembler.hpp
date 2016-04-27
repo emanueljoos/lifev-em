@@ -24,7 +24,6 @@
 
 namespace LifeV
 {
-
 typedef VectorEpetra           vector_Type;
 typedef boost::shared_ptr<vector_Type>         vectorPtr_Type;
 
@@ -53,7 +52,7 @@ computeVolumetricJacobianTerms ( const vector_Type& disp,
 
     	auto dP = eval (Wvol, F ) * _d2JdF (F, _dF);
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP, grad (phi_i) )
@@ -80,7 +79,7 @@ computeVolumetricJacobianTermsSecondDerivative ( const vector_Type& disp,
 
         auto dP = eval (dWvol, F ) * _dJdF (F, _dF) * _dJ (F);
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )
@@ -94,9 +93,9 @@ void
 computeLinearizedVolumetricJacobianTerms ( const vector_Type& disp,
                                            boost::shared_ptr<ETFESpace<Mesh, MapEpetra, 3, 3 > > dispETFESpace,
                                            matrixPtr_Type           jacobianPtr,
-                                           FunctorPtr               W)
+                                           FunctorPtr               W )
 {
-    using namespace ExpressionAssembly;
+   using namespace ExpressionAssembly;
     //
     auto I = _I;
     auto dF = _dF;
@@ -106,7 +105,7 @@ computeLinearizedVolumetricJacobianTerms ( const vector_Type& disp,
 	if(disp.comm().MyPID() == 0)
     std::cout << "Computing linear volumetric Jacobian terms ... \n";
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP  , grad (phi_i) )
@@ -130,7 +129,7 @@ computeLinearizedDeviatoricJacobianTerms ( const vector_Type& disp,
 	if(disp.comm().MyPID() == 0)
     std::cout << "Computing linear deviatoric Jacobian terms ... \n";
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP  , grad (phi_i) )
@@ -173,7 +172,7 @@ computeI1JacobianTerms ( const vector_Type& disp,
 	auto dPdF = eval (W1, F ) * _d2I1bardF(F, _dF);
 
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dPdF , grad (phi_i) )
@@ -217,7 +216,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
     auto dPdF = eval (dW1, F ) * _dI1bardF (F, _dF) * _dI1bar (F) ;
 
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dPdF , grad (phi_i) )
@@ -241,7 +240,7 @@ computeI1JacobianMixedTermsSecondDerivative ( const vector_Type& disp,
 
     auto dP = eval (dW1dI2, F ) * _dI2bardF (F, _dF)  * dI1bar (F);
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
@@ -256,16 +255,78 @@ computeI2JacobianTerms ( const vector_Type& disp,
                          matrixPtr_Type           jacobianPtr,
                          FunctorPtr                 W2)
 {
-    using namespace ExpressionAssembly;
+//-----------------
+boost::shared_ptr<RegionMesh<LinearTetra> > Dummy = dispETFESpace -> mesh();
+UInt num_MeshPoints = Dummy -> numPoints();
+Dummy -> showMe();
+//determine the indices in the mesh which lie in the region:
+std::vector<UInt> indices;
+double M_xMid = -0.7;
+double M_yMid = 3;
+double M_aMajor = 1.2;
+double M_bMinor = 1.9;
+double M_zMin = -4.0;
+double M_zMax = 0; 
+for (UInt i=0;i<num_MeshPoints;i++)
+        {
+                double x_value = Dummy -> point(i).x();
 
+                double y_value = Dummy -> point(i).y();
+
+                double z_value = Dummy -> point(i).z();
+
+                double elliptic_value = (x_value-M_xMid)*(x_value-M_xMid)/(M_aMajor*M_aMajor)+(y_value-M_yMid)*(y_value-M_yMid)/(M_bMinor*M_bMinor);
+
+                        if( (elliptic_value<=1)  && (M_zMin<z_value) && (z_value<M_zMax)   )
+                        {
+                                 indices.push_back(i);
+
+                        }
+        }
+int size_of_indicesvector=indices.size();
+VectorEpetra test_vector(dispETFESpace -> map());
+int size_of_test_vector=test_vector.blockMap().NumMyElements();
+std::cout<<"HALLo"<<size_of_test_vector;
+
+for(int i = 0;i<size_of_test_vector;i++)
+	{
+		int index = test_vector.blockMap().GID(i);
+		test_vector(index) = 1;
+	}
+
+for (int i =0; i<size_of_test_vector;i++)
+{
+	int index_test_vector = test_vector.blockMap().GID (i);
+	
+	for (int j = 0;j<size_of_indicesvector;j++)
+		{
+			int dummy = indices[j];
+	
+				if(index_test_vector == dummy)
+					{	
+						test_vector[index_test_vector] *=  1;					
+					}
+		}
+}
+
+VectorSmall<3> testDotVec;
+testDotVec [0] = 1;
+testDotVec [1] = 0;
+testDotVec [2] = 0;
+
+//----------------
+    using namespace ExpressionAssembly;
+	auto test = value(dispETFESpace,test_vector);	
+	auto testDot = value(testDotVec);
+	auto testFactor = dot(test, testDot);
     //
 	if(disp.comm().MyPID() == 0)
     std::cout << "Computing I2 jacobian terms  ... \n";
 	auto F = _F (dispETFESpace, disp, 0);
 
-    auto dP = eval (W2, F ) * _d2I2bardF (F, _dF);
+    auto dP = eval (W2, F ) *  _d2I2bardF (F, _dF) * testFactor;
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
@@ -287,7 +348,7 @@ computeI2JacobianTermsSecondDerivative ( const vector_Type& disp,
 
     auto dP = eval (dW2, F ) * _dI2bardF (F, _dF)  * _dI2bar (F);
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
@@ -311,7 +372,7 @@ computeI2JacobianMixedTermsSecondDerivative ( const vector_Type& disp,
 
     auto dP = eval (dW2dI1, F ) * (_dI1bardF (F, _dF ) ) * (_dI2bar (F) );
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
@@ -351,7 +412,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
 
     auto dP = eval (dW1, F, f0, s0) * ( _dI1bardF (F, _dF) ) * ( _dI1bar (F) );
     integrate ( elements ( dispETFESpace->mesh() ) ,
-                quadRuleTetra4pt,
+                quadRuleTetra15pt,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
@@ -391,7 +452,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
 
         auto dP = eval (dW1, F, f0, s0) * ( _dI4dF ( F, f0, _dF ) ) * (_dI1bar (F) );
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )
@@ -404,7 +465,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
 
         auto dP = eval (dW1, F, f0, s0) * ( _dI4dF ( F, s0, _dF ) ) * (_dI1bar (F) );
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )
@@ -419,7 +480,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
                   * ( _dI8dF ( F, f0, s0, _dF ) )
                   * (_dI1bar (F) );
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )
@@ -434,7 +495,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
                   * ( _dI8dF ( F, f0, n0, _dF ) )
                   * (_dI1bar (F) );
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )
@@ -449,7 +510,7 @@ computeI1JacobianTermsSecondDerivative ( const vector_Type& disp,
                   * ( _dI8dF ( F, s0, n0, _dF ) )
                   * (_dI1bar (F) );
         integrate ( elements ( dispETFESpace->mesh() ) ,
-                    quadRuleTetra4pt,
+                    quadRuleTetra15pt,
                     dispETFESpace,
                     dispETFESpace,
                     dot ( dP , grad (phi_i) )

@@ -72,6 +72,7 @@ public:
     void setParameters (data_Type& data)
     {
     	M_mu= data.solidParameter<Real>("mu");
+	std::cout<<"Koeffizient mu : "<<M_mu;
     }
 
 private:

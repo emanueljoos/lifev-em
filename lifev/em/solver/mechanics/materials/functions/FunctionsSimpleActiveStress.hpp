@@ -64,7 +64,8 @@ public:
                                   const vectorPtr_Type& sheetActivation,
                                   const vectorPtr_Type& normalActivation,
                                   boost::shared_ptr<ETFESpace<Mesh, MapEpetra, 3, 1 > >  activationETFESpace,
-                                  matrixPtr_Type           jacobianPtr)
+                                  matrixPtr_Type           jacobianPtr,
+				  boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr	)
     {
         EMAssembler::computeFiberActiveStressJacobianTerms (disp,
                                                             dispETFESpace,
@@ -72,7 +73,7 @@ public:
                                                             *fiberActivation,
                                                             activationETFESpace,
                                                             jacobianPtr,
-                                                            this->getMe() );
+                                                            this->getMe());
 //        EMAssembler::computeModifiedFiberActiveStressJacobianTerms (disp,
 //                                                            dispETFESpace,
 //                                                            fibers,

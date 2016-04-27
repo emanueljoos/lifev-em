@@ -21,15 +21,15 @@ monodomain_xml_file = ParamList.xml
     normalDiffusion = 10 #0.176 #3.0
     
     [../time_discretization]
-    endtime         = 800 
-    timestep        = 0.050
+    endtime         = 100000
+    timestep        = 0.05
     
     [../discretization]
     LumpedMass = false // use when too coarse mesh
     #elementsOrder   = P1
 
     [../flags]
-    lvendo = 50
+    lvendo = 23
     # rvedno = 51
     # rvseptum = 52
 
@@ -55,8 +55,8 @@ monodomain_xml_file = ParamList.xml
     ActivationModel = ActiveStressRossi14
     CalciumIndex = 0 # potential for activstress, 2 from minimal for active strain.
     ActiveForceCoefficient = -4.0
-    Tmax = 50 #1 #5 #0.05 #1 #0.1 #2 # Default: 50
-    ActiveStress_Beta =  2.279 #45.6 #2.279 #45.6 #2.279
+    Tmax = 10 #1 #5 #0.05 #1 #0.1 #2 # Default: 50
+    ActiveStress_Beta = 2.279 #45.6 #2.279 #45.6 #2.279
     EMActiveStrainOrthotropicParameter = -666.0 # -666.0 for deactivated
         #Active Strain types Available
         # Anisotropic
@@ -64,33 +64,8 @@ monodomain_xml_file = ParamList.xml
         # TransverselyIsotropic
     EMActiveStrainType = TransverselyIsotropic
 
-    [../cardiopathy]
-	#A cardiopathy is implementet in ActiveStressRossi14.cpp
-	#the activation Parameter which is calculated there can be alleviated in certain regions on the left ventricular wall 
-	#choose case_area = 1 if you want to alleviate a cubic region
-	#choose case_area = 2 if you want to alleviate a ellipical region
-	#choose case_area = 0 if you do not want to implement a cardiopathy
-     case_area = O
-	#cubic Region: 
-     x_max = 1.04
-     x_min = -1.04
-     y_max = 4.411
-     y_min = 2.113
-     z_max = 0.0
-     z_min = -4.0
-         
-        #choose a location of the ellipse with x_mid and y_mid and choose a and b 
-        #z component is the same as in the cubic region
-     a_major = 1.2
-     b_minor = 1.9
-     x_midpoint = -0.7
-     y_midpoint = 3.0
-
-	# choose the amount you want to alleviate the activation
-     weakness_factor=0.01
-
     [../time_discretization]
-    endtime         = 800
+    endtime         = 100000
     timestep        = 0.05
 
     [../]
@@ -123,14 +98,14 @@ monodomain_xml_file = ParamList.xml
         #PMR   = Passive Mooney Rivlin
         #SimpleActiveStress  = Simple Fiber Active Stress
 
-    EMPassiveMaterialType = PMR
+    EMPassiveMaterialType = PNH
     EMActiveStressMaterialType = SimpleActiveStress #AHO #SFAS
 
     # Simple Fiber Active Stress
-    Tmax = 500000 #30000 #500000 # 500000 value is thought for Holzapfel
+    Tmax = 450000 #30000 #500000 # 500000 value is thought for Holzapfel
 
     #NeoHokean
-    mu = 5000 #4960
+    mu = 15000 #4960
 
     # Holzapfel
     a           = 3330
@@ -156,42 +131,20 @@ monodomain_xml_file = ParamList.xml
 
 
     [../boundary_conditions]
-    list = 'SupportNormal SupportRobin BaseNormal BaseRobin'
-    listVariableBC = 'LVEndo RVEndo RVSeptum RVRadii'
-    numPreloadSteps  =10 # No initial deformation takes place
+    list =  'BaseNormal BaseRobin'
+    listVariableBC = 'LVEndo'
+    numPreloadSteps  = 10
 
-        [./SupportNormal]
+        [./BaseNormal]
         type       = Essential
-        flag       = 49
-        mode       = Component
-        component  = 1
-        function  = '0.0'
-
-        [../SupportRobin]
-        type       = Robin
-        flag       = 49
-        mode       = Component
-        component  = '0 2'
-        function = '0.0'
-
-            [./RobinAlpha]
-            function = '10000' #' 5.00 * 1000' # D
-
-            [../RobinBeta]
-            function = '1' #' 5.00 * 1000' # D
-
-            [../]
-
-        [../BaseNormal]
-        type       = Essential
-        flag       = 48
+        flag       = 22
         mode       = Component
         component  = 1
         function  = '0.0'
 
         [../BaseRobin]
         type       = Robin
-        flag       = 48
+        flag       = 22
         mode       = Component
         component  = '0 2'
         function = '0.0'
@@ -205,20 +158,8 @@ monodomain_xml_file = ParamList.xml
             [../]
 
         [../LVEndo]
-            flag    = 50
+            flag    = 23
             index   = 0
-
-        [../RVEndo]
-            flag    = 51
-            index   = 1
-
-        [../RVSeptum]
-            flag    = 52
-            index   = 1
-
-        [../RVRadii]
-            flag    = 53
-            index   = 1
 
         [../]
 
@@ -243,11 +184,11 @@ monodomain_xml_file = ParamList.xml
 
     [../space_discretization]
     mesh_type           = .mesh
-    mesh_dir            = biVentCoarse/
-    mesh_file           = biVentCoarse.mesh
+    mesh_dir            = siVentP2/
+    mesh_file           = siVent.mesh
     mesh_scaling        = 0.1
     mesh_rotation_2     = 0.0
-    order               = P1
+    order               = P2
     anisotropic         = true
     fiber_name          = FiberDirection
     fiber_fieldname     = fibers

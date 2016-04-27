@@ -102,7 +102,7 @@ EMData::setupActivationParameters(GetPot& dataFile, const std::string& section)
     M_activationParametersList.set ("ActiveStress_Beta", ActiveStressBeta );
    
     //cardiopathy
-    int caseArea = dataFile(( section + "/cardiopathy/case_area" ).data(), 2 );
+    int caseArea = dataFile(( section + "/cardiopathy/case_area" ).data(), 0 );
     M_activationParametersList.set("case_area",caseArea);
 
     double weaknessFactor = dataFile(( section + "/cardiopathy/weakness_factor").data(), 0.01);

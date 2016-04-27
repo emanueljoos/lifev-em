@@ -117,6 +117,8 @@ else if (M_caseArea == 2)
                         }
         }
 }
+else{}
+
 int size_of_indicesvector=indices.size();
 //solving de Activation equation with the help of explicit Euler
     VectorEpetra rhs ( *( this->M_electroSolution.at(0) ) ); 

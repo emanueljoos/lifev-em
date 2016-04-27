@@ -23,6 +23,8 @@
 #include <lifev/em/solver/EMETAFunctors.hpp>
 
 //#include <boost/typeof/typeof.hpp>
+#include <lifev/core/mesh/RegionMesh.hpp>
+
 
 namespace LifeV
 {
