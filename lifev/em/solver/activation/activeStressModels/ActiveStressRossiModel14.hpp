@@ -34,8 +34,6 @@ public:
     virtual ~ActiveStressRossiModel14() {}
 
     void solveModel (Real& timeStep );
-    void solveModel2 (Real& timeStep ,boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr);
-
 
 
 
@@ -83,18 +81,7 @@ private:
     Real M_coefficientBeta;
     Real M_coefficientMu;
     Real M_maximumActiveTenstion;
-	int M_caseArea;
-	double M_weakessFactor;
-	double M_xMax;
-	double M_xMin;
-	double M_yMax;
-	double M_yMin;
-	double M_zMax;
-	double M_zMin;
-	double M_aMajor;
-	double M_bMinor;
-	double M_xMid;
-	double M_yMid;
+
 };
 
 

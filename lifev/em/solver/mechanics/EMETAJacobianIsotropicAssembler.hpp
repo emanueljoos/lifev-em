@@ -244,13 +244,37 @@ computeI1JacobianMixedTermsSecondDerivative ( const vector_Type& disp,
                 dispETFESpace,
                 dispETFESpace,
                 dot ( dP , grad (phi_i) )
-              ) >> jacobianPtr;
-}
+              ) >> jacobianPtr;}
+
 
 
 template <typename Mesh, typename FunctorPtr >
 void
-computeI2JacobianTerms ( const vector_Type& disp,
+computeI2JacobianTerms( const vector_Type& disp,
+                         boost::shared_ptr<ETFESpace<Mesh, MapEpetra, 3, 3 > >  dispETFESpace,
+                         matrixPtr_Type           jacobianPtr,
+                         FunctorPtr                 W2)
+
+{
+using namespace ExpressionAssembly;
+	if(disp.comm().MyPID() == 0)
+   	std::cout << "Computing I2 jacobian terms  ... \n";
+        auto F = _F (dispETFESpace, disp, 0);
+
+    auto dP = eval (W2, F ) *  _d2I2bardF (F, _dF);
+    integrate ( elements ( dispETFESpace->mesh() ) ,
+                quadRuleTetra15pt,
+                dispETFESpace,
+                dispETFESpace,
+                dot ( dP , grad (phi_i) )
+              ) >> jacobianPtr;
+}
+
+
+
+template <typename Mesh, typename FunctorPtr >
+void
+computeI2JacobianTerms_cardiopathy ( const vector_Type& disp,
                          boost::shared_ptr<ETFESpace<Mesh, MapEpetra, 3, 3 > >  dispETFESpace,
                          matrixPtr_Type           jacobianPtr,
                          FunctorPtr                 W2)
@@ -286,7 +310,6 @@ for (UInt i=0;i<num_MeshPoints;i++)
 int size_of_indicesvector=indices.size();
 VectorEpetra test_vector(dispETFESpace -> map());
 int size_of_test_vector=test_vector.blockMap().NumMyElements();
-std::cout<<"HALLo"<<size_of_test_vector;
 
 for(int i = 0;i<size_of_test_vector;i++)
 	{
