@@ -52,7 +52,7 @@ monodomain_xml_file = ParamList.xml
         #     InverseViscosity
         #     ActiveForceCoefficient
         #     ChemicalThreshold
-    ActivationModel = ActiveStressRossi14
+    ActivationModel = ActiveStressModelRossiCardiopathy  # ActiveStressRossi14
     CalciumIndex = 0 # potential for activstress, 2 from minimal for active strain.
     ActiveForceCoefficient = -4.0
     Tmax = 50 #1 #5 #0.05 #1 #0.1 #2 # Default: 50

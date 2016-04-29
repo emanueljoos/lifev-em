@@ -5,8 +5,8 @@
 *  Author: ejoos
 */
 
-#ifndef ACTIVESTRESSROSSIMODEL14_HPP_
-#define ACTIVESTRESSROSSIMODEL14_HPP_
+#ifndef ACTIVESTRESSROSSIMODELCARDIOPATHY_HPP_
+#define ACTIVESTRESSROSSIMODELCARDIOPATHY_HPP_
 
 #include <lifev/em/solver/activation/activeStressModels/ActiveStressActivation.hpp>
 #include <lifev/core/mesh/RegionMesh.hpp>
@@ -14,7 +14,7 @@
 namespace LifeV
 {
 
-class ActiveStressRossiModel14 : public virtual ActiveStressActivation
+class ActiveStressRossiModelCardiopathy : public virtual ActiveStressActivation
 {
 public:
 	//! Distributed vector // For parallel usage
@@ -24,13 +24,13 @@ public:
 
         typedef ActiveStressActivation                                      super;
 
-	ActiveStressRossiModel14 (Real beta = 2.279, Real mu = 1000., Real Tmax = 50.);
+	ActiveStressRossiModelCardiopathy (Real beta = 2.279, Real mu = 1000., Real Tmax = 50.);
 	
 
-	virtual ~ActiveStressRossiModel14() {}
+	virtual ~ActiveStressRossiModelCardiopathy() {}
 
-	void solveModel2 (Real& timeStep ,boost::shared_ptr<RegionMesh<LinearTetra> > fullMesh
-Ptr);
+	void solveModel2 (Real& timeStep ,boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr);
+	void solveModel (Real& timeStep );
 
     inline Real coefficientBeta()
     {
@@ -90,14 +90,14 @@ private:
 };
 
 
-inline Activation* createActiveStressRossiModel14()
+inline Activation* createActiveStressRossiModelCardiopathy()
 {
-    return new ActiveStressRossiModel14();
+    return new ActiveStressRossiModelCardiopathy();
 }
 
 namespace
 {
-static bool registerActivation_ActiveStressRossi14 = Activation::EMActivationFactory::instance().registerProduct ("ActiveStressRossi14", &createActiveStressRossiModel14 );
+static bool registerActivation_ActiveStressRossiModelCardiopathy = Activation::EMActivationFactory::instance().registerProduct ("ActiveStressModelRossiCardiopathy", &createActiveStressRossiModelCardiopathy );
 }
 
 } /* namespace LifeV */

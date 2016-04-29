@@ -5,13 +5,13 @@
  *     *      Author: ejoos
  *      */
 
-#include <lifev/em/solver/activation/activeStressModels/ActiveStressRossiModel_cardiopathy.hpp>
+#include <lifev/em/solver/activation/activeStressModels/ActiveStressRossiModelCardiopathy.hpp>
 #include<iostream>
 
 namespace LifeV
 {
 
-ActiveStressRossiModel14::ActiveStressRossiModel14 (Real beta, Real mu, Real Tmax ) :
+ActiveStressRossiModelCardiopathy::ActiveStressRossiModelCardiopathy (Real beta, Real mu, Real Tmax ) :
     M_coefficientBeta (beta),
     M_coefficientMu (mu),
     M_maximumActiveTenstion (Tmax)
@@ -21,7 +21,7 @@ ActiveStressRossiModel14::ActiveStressRossiModel14 (Real beta, Real mu, Real Tma
 
 
 void
-ActiveStressRossiModel14::setParameters( EMData& data )
+ActiveStressRossiModelCardiopathy::setParameters( EMData& data )
 {
         M_maximumActiveTenstion = data.activationParameter<Real>("MaxActiveTension");
         M_coefficientBeta = data.activationParameter<Real>("ActiveStress_Beta");
@@ -42,7 +42,7 @@ ActiveStressRossiModel14::setParameters( EMData& data )
 }
 
 void
-ActiveStressRossiModel14::setup(EMData& data, const MapEpetra& map)
+ActiveStressRossiModelCardiopathy::setup(EMData& data, const MapEpetra& map)
 {
         setParameters(data);
     this->M_fiberActivationPtr.reset ( new vector_Type ( map ) );
@@ -51,7 +51,7 @@ ActiveStressRossiModel14::setup(EMData& data, const MapEpetra& map)
 }
 
 void
-ActiveStressRossiModel14::setupActivationPtrs(  vectorPtr_Type& fiberActivationPtr,
+ActiveStressRossiModelCardiopathy::setupActivationPtrs(  vectorPtr_Type& fiberActivationPtr,
                                                                                                 vectorPtr_Type& sheetActivationPtr,
                                                                                                 vectorPtr_Type& normalActivationPtr )
 {
@@ -61,14 +61,14 @@ ActiveStressRossiModel14::setupActivationPtrs(  vectorPtr_Type& fiberActivationP
 }
 
 void
-ActiveStressRossiModel14::updateActivation(     vectorPtr_Type& fiberActivationPtr,
+ActiveStressRossiModelCardiopathy::updateActivation(     vectorPtr_Type& fiberActivationPtr,
                                                                                         vectorPtr_Type& sheetActivationPtr,
                                                                                         vectorPtr_Type& normalActivationPtr )
 {
         setupActivationPtrs(fiberActivationPtr, sheetActivationPtr, normalActivationPtr);
 }
 
-void ActiveStressRossiModel14::solveModel2 (Real& timeStep,boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr)
+void ActiveStressRossiModelCardiopathy::solveModel2 (Real& timeStep,boost::shared_ptr<RegionMesh<LinearTetra> > fullMeshPtr)
 {
 
 //determine the number of meshPoints:
@@ -141,7 +141,7 @@ for (int i =0; i<size_of_rhs;i++)
 *super::M_fiberActivationPtr += rhs; 
 }
 
-void ActiveStressRossiModel14::solveModel (Real& timeStep)
+void ActiveStressRossiModelCardiopathy::solveModel (Real& timeStep)
 {
     VectorEpetra rhs ( *( this->M_electroSolution.at(0) ) );
     rhs *= rhs.operator > (0.0);
@@ -152,4 +152,5 @@ void ActiveStressRossiModel14::solveModel (Real& timeStep)
     //    //rhs *= (timeStep / M_coefficientMu);
     //
      *super::M_fiberActivationPtr += rhs;
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+}
+}/* namespace LifeV */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

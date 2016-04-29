@@ -1,11 +1,13 @@
 SET( solver_activation_activeStressModels_HEADERS
   solver/activation/activeStressModels/ActiveStressRossiModel14.hpp
+   solver/activation/activeStressModels/ActiveStressRossiModelCardiopathy.hpp
   solver/activation/activeStressModels/ActiveStressNashPanfilovModel04.hpp
   solver/activation/activeStressModels/ActiveStressActivation.hpp
 CACHE INTERNAL "")
 
 SET( solver_activation_activeStressModels_SOURCES
   solver/activation/activeStressModels/ActiveStressRossiModel14.cpp
+  solver/activation/activeStressModels/ActiveStressRossiModelCardiopathy.cpp
   solver/activation/activeStressModels/ActiveStressNashPanfilovModel04.cpp
  CACHE INTERNAL "")
 

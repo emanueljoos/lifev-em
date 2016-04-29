@@ -274,7 +274,7 @@ using namespace ExpressionAssembly;
 
 template <typename Mesh, typename FunctorPtr >
 void
-computeI2JacobianTerms_cardiopathy ( const vector_Type& disp,
+computeI2JacobianTermsCardiopathy ( const vector_Type& disp,
                          boost::shared_ptr<ETFESpace<Mesh, MapEpetra, 3, 3 > >  dispETFESpace,
                          matrixPtr_Type           jacobianPtr,
                          FunctorPtr                 W2)

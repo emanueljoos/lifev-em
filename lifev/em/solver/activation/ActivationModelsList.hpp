@@ -12,6 +12,7 @@
 
 #include <lifev/em/solver/activation/activeStrainModels/ActiveStrainRossiModel14.hpp>
 #include <lifev/em/solver/activation/activeStressModels/ActiveStressRossiModel14.hpp>
+#include <lifev/em/solver/activation/activeStressModels/ActiveStressRossiModelCardiopathy.hpp>
 #include <lifev/em/solver/activation/activeStressModels/ActiveStressNashPanfilovModel04.hpp>
 
 #endif /* ACTIVATIONMODELSLIST_HPP_ */
